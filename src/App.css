@@ -146,6 +146,12 @@ button:active {
 .book-authors {
   font-size: 0.8em;
 }
+.book-authors ul span {
+  padding-left:1em
+}
+.book-authors li span {
+  padding-left:1em
+}
 
 .book-title {
   margin-top: 10px;
