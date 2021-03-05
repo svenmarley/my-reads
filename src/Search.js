@@ -17,6 +17,10 @@ class Search extends Component {
         updateBook : PropTypes.func.isRequired,
     };
 
+    /**
+     * Handle the changing query and send it to the API and change the list of books based on that return
+     * @param e {event}
+     */
     handleChange = ( e ) => {
         const sFunc = this.sFunc + '.handleChange()-->';
         const debug = false;
@@ -30,6 +34,9 @@ class Search extends Component {
         } );
     };
 
+    /**
+     * Call the API with the current query, and update the state.foundBooks array
+     */
     findBooks = () => {
         const sFunc = this.sFunc + '.findBooks()-->';
         const debug = false;
@@ -44,8 +51,8 @@ class Search extends Component {
                     debug && console.log( sFunc + 'ret', ret );
                     debug && console.log( sFunc + 'props', this.props );
 
-                    ret = ret || [];
-                    if ( typeof ( ret.error ) !== 'undefined' ) {
+                    ret = ret || [];        // handle in case no books are returned
+                    if ( typeof ( ret.error ) !== 'undefined' ) {   // handle if an error is returned
                         ret = [];
                     }
 
@@ -59,11 +66,11 @@ class Search extends Component {
 
                         debug && console.log( 'foundMyBookArray', foundMyBookArray );
 
-                        if ( foundMyBookArray.length ) {
+                        if ( foundMyBookArray.length ) {    // set the searchedBook.shelf to the found books shelf
                             searchedBook.shelf = foundMyBookArray[0].shelf;
                         }
                         else {
-                            searchedBook.shelf = g.shelves.filter( ( s ) => {
+                            searchedBook.shelf = g.shelves.filter( ( s ) => {       // else, set it to NONE
                                 return ( s.id === 'NONE' );
                             } ).apiID;
                         }
