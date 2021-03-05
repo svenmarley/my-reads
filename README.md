@@ -2,14 +2,21 @@
 
 This is my version of the MyReads project as requested in my pursuit of a [Nanodegree](https://www.udacity.com/school-of-programming) in React from Udacity.
 
-
+The requirement is to use a server created by the Udacity team to get lists of books, and track the books you have of interest - saving them different options/shelves back to the server.
 
 
 
 ## TL;DR
 
-To get started developing right away:
+To get started right away:
 
+* It is presumed the following are installed and working correctly:
+  * [Node, npm](ttps://nodejs.org)
+  * [Git](https://git-scm.com)
+
+* Clone the project from here (https://github.com/svenmarley/my-reads.git)
+   `/dev> git clone https://github.com/svenmarley/my-reads.git` - Will create a new my-reads directory in the /dev subdirectory
+* Change to the new my-reads directory
 * install all project dependencies with `npm install`
 * start the development server with `npm start`
 
