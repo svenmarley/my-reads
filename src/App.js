@@ -1,17 +1,18 @@
 import React from 'react';
 import './App.css';
-import { Link, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import ListBooks from './ListBooks.js';
 import * as BooksAPI from './BooksAPI';
 import Search from './Search.js';
 
-// used a Global for "defines" so we can change text, apiID's, etc...
+// used a Global for "defines" so we don't hardcode things, and we can easily change text, apiID's, etc...
 const g = {
     shelves : [
         { id : 'CURR_READ', apiID : 'currentlyReading', text : 'Currently Reading', isDisplayed: true },
         { id : 'WANT_READ', apiID : 'wantToRead', text : 'Want to Read', isDisplayed: true },
         { id : 'ALREADY_READ', apiID : 'read', text : 'Already Read', isDisplayed: true },
-        { id : 'MY_NEW_SHELF', apiID : 'myNewShelf', text : 'My New Shelf', isDisplayed: true },
+        // added a new shelf to see that this implementation would support it, and it does, but the API server does not support a new shelf
+        //{ id : 'MY_NEW_SHELF', apiID : 'myNewShelf', text : 'My New Shelf', isDisplayed: true },
         { id : 'NONE', apiID : 'none', text : 'None', isDisplayed: false },
     ],
 };
@@ -21,17 +22,27 @@ class BooksApp extends React.Component {
     sFunc = 'BooksApp';
 
     state = {
-        books : [],
+        books : [],     // this is the list of "my" books that are in the shelves I have chosen
     };
 
+    /**
+     * Either adds a new book to the list, or changes the shelf of an existing book.
+     *      (Changing shelf to NONE removes the book from the list)
+     *
+     * @param bookID {String}
+     * @param newShelf {String}
+     * @param newBook {Object}
+     * @return {boolean}
+     */
     updateBook = ( bookID, newShelf, newBook ) => {
-        const sFunc = this.sFunc + '.updateBook()-->';
-        const debug = false;
+        const sFunc = this.sFunc + '.updateBook()-->';  // sFunc is a reused variable for outputting debug code and knowing the place it came from
+        const debug = false;                            // this allows us to turn on/off debug w/in a function easily
 
         debug && console.log( sFunc + 'bookID', bookID, 'newShelf', newShelf );
 
         debug && console.log( sFunc + 'oldBooks', this.state.books );
         let bFound = false;
+        // walk the current list of books, and if we find a match, change it's shelf to the new shelf
         const newBooks = this.state.books.map( (book) => {
             if ( book.id === bookID ) {
                 bFound = true;
@@ -39,6 +50,7 @@ class BooksApp extends React.Component {
             }
             return( book )
         })
+        // if no match was found, then this is coming from the Search and we need to add the book to our list
         if ( !bFound ) {
             newBook.shelf = newShelf;
             newBooks.push( newBook );
@@ -56,32 +68,32 @@ class BooksApp extends React.Component {
 
     };
 
+    /**
+     * On load, we go get our the existing books from the API server
+     */
     componentDidMount() {
         const sFunc = this.sFunc + '.componentDidMount()-->';
         const debug = false;
 
+        // get all our current books from the API server
         BooksAPI.getAll()
                 .then( ( myBooks ) => {
 
+                    // prints out all the books we got
                     debug && myBooks.map( ( book ) => {
                         console.log( sFunc + 'book', book );
                         return true;
                     } );
 
-                    this.setState( ( prevState ) => ( {
+                    this.setState( () => ( {
                         books : myBooks,
                     } ), () => {
                         debug && this.state.books.map( ( book ) => {
                             console.log( sFunc + 'book2', book.title, '-', book.shelf );
                             return true;
                         } );
-
-                        return true;
                     } );
-                    return true;
-
                 } );
-        return true;
     }
 
     render() {
@@ -95,25 +107,14 @@ class BooksApp extends React.Component {
                 )}
                 />
 
-                <Route exact path='/' render={() => ( <div>
-                    <div className="list-books">
-                        <div className="list-books-title">
-                            <h1>MyReads</h1>
-                        </div>
+                <Route exact path='/' render={() => (
+                    <div>
                         <ListBooks
                             updateBook={this.updateBook}
                             books={this.state.books}
                             shelves={g.shelves}
                             isSearchList={false}
                         />
-                        <div className="open-search">
-                            <Link to='/search' >
-                                <button>Add a book</button>
-                            </Link>
-                        </div>
-
-                    </div>
-
                 </div> )}/>
             </div>
         );
@@ -121,195 +122,3 @@ class BooksApp extends React.Component {
 }
 
 export default BooksApp;
-
-/*
- <div className="list-books">
- <div className="list-books-title">
- <h1>my-reads</h1>
- </div>
- <div className="list-books-content">
- <div>
- <div className="bookshelf">
- <h2 className="bookshelf-title">Currently Reading</h2>
- <div className="bookshelf-books">
- <ol className="books-grid">
- <li>
- <div className="book">
- <div className="book-top">
- <div className="book-cover" style={{
- width : 128,
- height : 193,
- backgroundImage : 'url("http://books.google.com/books/content?id=PGR2AwAAQBAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73-GnPVEyb7MOCxDzOYF1PTQRuf6nCss9LMNOSWBpxBrz8Pm2_mFtWMMg_Y1dx92HT7cUoQBeSWjs3oEztBVhUeDFQX6-tWlWz1-feexS0mlJPjotcwFqAg6hBYDXuK_bkyHD-y&source=gbs_api")',
- }}></div>
- <div className="book-shelf-changer">
- <select>
- <option value="move" disabled>Move to...</option>
- <option value="currentlyReading">Currently Reading</option>
- <option value="wantToRead">Want to Read</option>
- <option value="read">Read</option>
- <option value="none">None</option>
- </select>
- </div>
- </div>
- <div className="book-title">To Kill a Mockingbird</div>
- <div className="book-authors">Harper Lee</div>
- </div>
- </li>
- <li>
- <div className="book">
- <div className="book-top">
- <div className="book-cover" style={{
- width : 128,
- height : 188,
- backgroundImage : 'url("http://books.google.com/books/content?id=yDtCuFHXbAYC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72RRiTR6U5OUg3IY_LpHTL2NztVWAuZYNFE8dUuC0VlYabeyegLzpAnDPeWxE6RHi0C2ehrR9Gv20LH2dtjpbcUcs8YnH5VCCAH0Y2ICaKOTvrZTCObQbsfp4UbDqQyGISCZfGN&source=gbs_api")',
- }}></div>
- <div className="book-shelf-changer">
- <select>
- <option value="move" disabled>Move to...</option>
- <option value="currentlyReading">Currently Reading</option>
- <option value="wantToRead">Want to Read</option>
- <option value="read">Read</option>
- <option value="none">None</option>
- </select>
- </div>
- </div>
- <div className="book-title">Ender's Game</div>
- <div className="book-authors">Orson Scott Card</div>
- </div>
- </li>
- </ol>
- </div>
- </div>
- <div className="bookshelf">
- <h2 className="bookshelf-title">Want to Read</h2>
- <div className="bookshelf-books">
- <ol className="books-grid">
- <li>
- <div className="book">
- <div className="book-top">
- <div className="book-cover" style={{
- width : 128,
- height : 193,
- backgroundImage : 'url("http://books.google.com/books/content?id=uu1mC6zWNTwC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73pGHfBNSsJG9Y8kRBpmLUft9O4BfItHioHolWNKOdLavw-SLcXADy3CPAfJ0_qMb18RmCa7Ds1cTdpM3dxAGJs8zfCfm8c6ggBIjzKT7XR5FIB53HHOhnsT7a0Cc-PpneWq9zX&source=gbs_api")',
- }}></div>
- <div className="book-shelf-changer">
- <select>
- <option value="move" disabled>Move to...</option>
- <option value="currentlyReading">Currently Reading</option>
- <option value="wantToRead">Want to Read</option>
- <option value="read">Read</option>
- <option value="none">None</option>
- </select>
- </div>
- </div>
- <div className="book-title">1776</div>
- <div className="book-authors">David McCullough</div>
- </div>
- </li>
- <li>
- <div className="book">
- <div className="book-top">
- <div className="book-cover" style={{
- width : 128,
- height : 192,
- backgroundImage : 'url("http://books.google.com/books/content?id=wrOQLV6xB-wC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72G3gA5A-Ka8XjOZGDFLAoUeMQBqZ9y-LCspZ2dzJTugcOcJ4C7FP0tDA8s1h9f480ISXuvYhA_ZpdvRArUL-mZyD4WW7CHyEqHYq9D3kGnrZCNiqxSRhry8TiFDCMWP61ujflB&source=gbs_api")',
- }}></div>
- <div className="book-shelf-changer">
- <select>
- <option value="move" disabled>Move to...</option>
- <option value="currentlyReading">Currently Reading</option>
- <option value="wantToRead">Want to Read</option>
- <option value="read">Read</option>
- <option value="none">None</option>
- </select>
- </div>
- </div>
- <div className="book-title">Harry Potter and the Sorcerer's Stone</div>
- <div className="book-authors">J.K. Rowling</div>
- </div>
- </li>
- </ol>
- </div>
- </div>
- <div className="bookshelf">
- <h2 className="bookshelf-title">Read</h2>
- <div className="bookshelf-books">
- <ol className="books-grid">
- <li>
- <div className="book">
- <div className="book-top">
- <div className="book-cover" style={{
- width : 128,
- height : 192,
- backgroundImage : 'url("http://books.google.com/books/content?id=pD6arNyKyi8C&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE70Rw0CCwNZh0SsYpQTkMbvz23npqWeUoJvVbi_gXla2m2ie_ReMWPl0xoU8Quy9fk0Zhb3szmwe8cTe4k7DAbfQ45FEzr9T7Lk0XhVpEPBvwUAztOBJ6Y0QPZylo4VbB7K5iRSk&source=gbs_api")',
- }}></div>
- <div className="book-shelf-changer">
- <select>
- <option value="move" disabled>Move to...</option>
- <option value="currentlyReading">Currently Reading</option>
- <option value="wantToRead">Want to Read</option>
- <option value="read">Read</option>
- <option value="none">None</option>
- </select>
- </div>
- </div>
- <div className="book-title">The Hobbit</div>
- <div className="book-authors">J.R.R. Tolkien</div>
- </div>
- </li>
- <li>
- <div className="book">
- <div className="book-top">
- <div className="book-cover" style={{
- width : 128,
- height : 174,
- backgroundImage : 'url("http://books.google.com/books/content?id=1q_xAwAAQBAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE712CA0cBYP8VKbEcIVEuFJRdX1k30rjLM29Y-dw_qU1urEZ2cQ42La3Jkw6KmzMmXIoLTr50SWTpw6VOGq1leINsnTdLc_S5a5sn9Hao2t5YT7Ax1RqtQDiPNHIyXP46Rrw3aL8&source=gbs_api")',
- }}></div>
- <div className="book-shelf-changer">
- <select>
- <option value="move" disabled>Move to...</option>
- <option value="currentlyReading">Currently Reading</option>
- <option value="wantToRead">Want to Read</option>
- <option value="read">Read</option>
- <option value="none">None</option>
- </select>
- </div>
- </div>
- <div className="book-title">Oh, the Places You'll Go!</div>
- <div className="book-authors">Seuss</div>
- </div>
- </li>
- <li>
- <div className="book">
- <div className="book-top">
- <div className="book-cover" style={{
- width : 128,
- height : 192,
- backgroundImage : 'url("http://books.google.com/books/content?id=32haAAAAMAAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72yckZ5f5bDFVIf7BGPbjA0KYYtlQ__nWB-hI_YZmZ-fScYwFy4O_fWOcPwf-pgv3pPQNJP_sT5J_xOUciD8WaKmevh1rUR-1jk7g1aCD_KeJaOpjVu0cm_11BBIUXdxbFkVMdi&source=gbs_api")',
- }}></div>
- <div className="book-shelf-changer">
- <select>
- <option value="move" disabled>Move to...</option>
- <option value="currentlyReading">Currently Reading</option>
- <option value="wantToRead">Want to Read</option>
- <option value="read">Read</option>
- <option value="none">None</option>
- </select>
- </div>
- </div>
- <div className="book-title">The Adventures of Tom Sawyer</div>
- <div className="book-authors">Mark Twain</div>
- </div>
- </li>
- </ol>
- </div>
- </div>
- </div>
- </div>
- <div className="open-search">
- <button onClick={() => this.setState( { showSearchPage : true } )}>Add a book</button>
- </div>
- </div>
- )}
- </div>
- */
