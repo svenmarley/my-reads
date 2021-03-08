@@ -14,11 +14,14 @@ To get started right away:
   * [Node, npm](ttps://nodejs.org)
   * [Git](https://git-scm.com)
 
+* run the create-react-app 
+  `/dev> npx create-react-app my-reads` - - Will create a new my-reads directory in the /dev subdirectory 
 * Clone the project from here (https://github.com/svenmarley/my-reads.git)
-   `/dev> git clone https://github.com/svenmarley/my-reads.git` - Will create a new my-reads directory in the /dev subdirectory
+   `/dev> git clone https://github.com/svenmarley/my-reads.git` 
 * Change to the new my-reads directory
 * install all project dependencies with `npm install`
 * start the development server with `npm start`
+* Upon starting, the default browser will open, connecting to the npm server 
 
 ## What You're Getting
 ```bash
