@@ -1,12 +1,12 @@
 import React from 'react';
-import './App.css';
+import './assets/stylesheets/App.css';
 import { Route } from 'react-router-dom';
-import ListBooks from './ListBooks.js';
-import * as BooksAPI from './BooksAPI';
-import Search from './Search.js';
+import ListBooks from './components/ListBooks.js';
+import * as BooksAPI from './utils/BooksAPI';
+import Search from './components/Search.js';
 
 // used a Global for "defines" so we don't hardcode things, and we can easily change text, apiID's, etc...
-const g = {
+const globals = {
     shelves : [
         { id : 'CURR_READ', apiID : 'currentlyReading', text : 'Currently Reading', isDisplayed: true },
         { id : 'WANT_READ', apiID : 'wantToRead', text : 'Want to Read', isDisplayed: true },
@@ -16,7 +16,7 @@ const g = {
         { id : 'NONE', apiID : 'none', text : 'None', isDisplayed: false },
     ],
 };
-export { g };
+export { globals };
 
 class BooksApp extends React.Component {
     sFunc = 'BooksApp';
@@ -112,7 +112,7 @@ class BooksApp extends React.Component {
                         <ListBooks
                             updateBook={this.updateBook}
                             books={this.state.books}
-                            shelves={g.shelves}
+                            shelves={globals.shelves}
                             isSearchList={false}
                         />
                 </div> )}/>
