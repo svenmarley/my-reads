@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ListBooks from './ListBooks';
-import * as BooksAPI from './BooksAPI';
+import * as BooksAPI from '../utils/BooksAPI';
 import PropTypes from 'prop-types';
 
-import { g } from './App';
+import { globals } from '../App';
 
 class Search extends Component {
     sFunc = 'Search';
@@ -19,12 +19,12 @@ class Search extends Component {
 
     /**
      * Handle the changing query and send it to the API and change the list of books based on that return
-     * @param e {event}
+     * @param event {event}
      */
-    handleChange = ( e ) => {
+    handleChange = ( event ) => {
         const sFunc = this.sFunc + '.handleChange()-->';
         const debug = false;
-        const value = e.target.value;
+        const value = event.target.value;
 
         debug && console.log( sFunc + 'value', value );
         this.setState( () => ( {
@@ -70,8 +70,8 @@ class Search extends Component {
                             searchedBook.shelf = foundMyBookArray[0].shelf;
                         }
                         else {
-                            searchedBook.shelf = g.shelves.filter( ( s ) => {       // else, set it to NONE
-                                return ( s.id === 'NONE' );
+                            searchedBook.shelf = globals.shelves.filter( ( shelf ) => {       // else, set it to NONE
+                                return ( shelf.id === 'NONE' );
                             } ).apiID;
                         }
                         return true;
