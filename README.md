@@ -6,7 +6,7 @@ The requirement is to use a server created by the Udacity team to get lists of b
 
 
 
-## TL;DR
+## Installation
 
 To get started right away:
 
@@ -14,13 +14,14 @@ To get started right away:
   * [Node, npm](ttps://nodejs.org)
   * [Git](https://git-scm.com)
 
-* run the create-react-app 
-  `/dev> npx create-react-app my-reads` - - Will create a new my-reads directory in the /dev subdirectory 
 * Clone the project from here (https://github.com/svenmarley/my-reads.git)
-   `/dev> git clone https://github.com/svenmarley/my-reads.git` 
+   `/dev> git clone https://github.com/svenmarley/my-reads.git` - Will create a new my-reads directory in the /dev subdirectory
 * Change to the new my-reads directory
-* install all project dependencies with `npm install`
-* start the development server with `npm start`
+* Install all project dependencies with `npm install`
+
+## Usage
+* Goto the projects subdirectory
+* Start the development server with `npm start`
 * Upon starting, the default browser will open, connecting to the npm server 
 
 ## What You're Getting
@@ -52,7 +53,7 @@ Remember that good React design practice is to create new JS files for each comp
 
 ## Backend Server
 
-To simplify your development process, we've provided a backend server for you to develop against. The provided file [`BooksAPI.js`](src/BooksAPI.js) contains the methods you will need to perform necessary 
+To simplify your development process, we've provided a backend server for you to develop against. The provided file [`BooksAPI.js`](src/utils/BooksAPI.js) contains the methods you will need to perform necessary 
 operations on the backend:
 
 * [`getAll`](#getall)
