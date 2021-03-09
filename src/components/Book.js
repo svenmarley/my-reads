@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { g } from './App';
-import * as BooksAPI from './BooksAPI';
+import { globals } from '../App';
+import * as BooksAPI from '../utils/BooksAPI';
 import PropTypes from 'prop-types';
+
+// I considered using a functional component, but IMHO it
+//   1) makes the code less obvious that this is a component
+//   2) loses the propTypes ability for setting props as isRequired
 
 class Book extends Component {
     sFunc = 'Book';
@@ -44,7 +48,7 @@ class Book extends Component {
         const imageLinks2 = imageLinks || { smallThumbnail : '' };
         const imageLink = imageLinks2.smallThumbnail || imageLinks2.thumbnail || '';
 
-        shelf = shelf || g.shelves.filter( (s) => { return( s.id === 'NONE' ) })[0].apiID;
+        shelf = shelf || globals.shelves.filter( ( shelf) => { return( shelf.id === 'NONE' ) })[0].apiID;
         debug && console.log( sFunc + 'id', id );
 
         return (
@@ -61,18 +65,18 @@ class Book extends Component {
                                     onChange={this.moveBook}
                             >
                                 <option key='move' value="move" disabled>Move to...</option>
-                                {g.shelves.map( ( s ) => (
+                                {globals.shelves.map( ( shelf ) => (
                                     <option
-                                        key={s.id}
-                                        value={s.apiID}
-                                    >{s.text}</option>
+                                        key={shelf.id}
+                                        value={shelf.apiID}
+                                    >{shelf.text}</option>
                                 ) )}
                             </select>
                         </div>
                     </div>
                     <div className="book-title">{title}</div>
                     <div className="book-authors">
-                        {authors.map( ( a ) => ( <div key={a}>{a}</div> ) )}
+                        {authors.map( ( author ) => ( <div key={author}>{author}</div> ) )}
                     </div>
                 </div>
             </li>
