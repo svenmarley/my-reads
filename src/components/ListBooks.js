@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Book from './Book';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import anylogger from 'anylogger';
 
 // I considered using a functional component, but IMHO it
 //   1) makes the code less obvious that this is a component
@@ -13,15 +14,14 @@ class ListBooks extends Component {
         updateBook : PropTypes.func.isRequired,
         isSearchList : PropTypes.bool.isRequired,
     };
-    sFunc = 'ListBooks';
+    sFunc = this.constructor.name;
 
     render() {
-        const sFunc = this.sFunc + '.ListBooks()-->';
-        const debug = false;
+        const sFunc = this.sFunc + ':ListBooks';
+        const log = anylogger( sFunc );
         const { shelves, books, updateBook, isSearchList } = this.props;
 
-        debug && console.log( sFunc + 'isSearchList', isSearchList );
-        debug && console.log( sFunc + 'shelves', shelves );
+        log.debug( 'isSearchList', isSearchList, 'shelves', shelves );
         return (
             <div>
                 <div className="list-books-content">

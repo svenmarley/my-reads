@@ -2,33 +2,34 @@ import React, { Component } from 'react';
 import { globals } from '../App';
 import * as BooksAPI from '../utils/BooksAPI';
 import PropTypes from 'prop-types';
+import anylogger from 'anylogger';
 
 // I considered using a functional component, but IMHO it
 //   1) makes the code less obvious that this is a component
 //   2) loses the propTypes ability for setting props as isRequired
 
 class Book extends Component {
-    sFunc = 'Book';
+    sFunc = this.constructor.name;
     static propTypes = {
         book : PropTypes.object.isRequired,
         updateBook : PropTypes.func.isRequired,
     };
 
     moveBook = ( event ) => {
-        const sFunc = this.sFunc + '.moveBook()-->';
-        const debug = true;
+        const sFunc = this.sFunc + ':moveBook';
+        const log = anylogger( sFunc.toLowerCase() );
         const { id } = this.props.book;
         const newShelf = event.target.value;
 
         event.preventDefault();
 
-        debug && console.log( sFunc + 'newShelf', newShelf, 'id', id );
+        log.debug( 'newShelf', newShelf, 'id', id );
 
         BooksAPI.update( { id : id }, newShelf )
                 .then( ( ret ) => {
-                    const sFunc = this.sFunc + '.update()-->';
+                    const sFunc = '.update()-->';
 
-                    debug && console.log( sFunc + 'ret', ret );
+                    log.debug( sFunc + 'ret', ret );
 
                     this.props.updateBook( id, newShelf, this.props.book );
 
@@ -40,8 +41,8 @@ class Book extends Component {
     };
 
     render() {
-        const sFunc = this.sFunc + '.render()-->';
-        const debug = false;
+        const sFunc = this.sFunc + ':render';
+        const log = anylogger( sFunc.toLowerCase() );
         let { title, imageLinks, authors, shelf, id } = this.props.book;
 
         authors = authors || [];
@@ -49,7 +50,7 @@ class Book extends Component {
         const imageLink = imageLinks2.smallThumbnail || imageLinks2.thumbnail || '';
 
         shelf = shelf || globals.shelves.filter( ( shelf) => { return( shelf.id === 'NONE' ) })[0].apiID;
-        debug && console.log( sFunc + 'id', id );
+        log.debug( 'id', id );
 
         return (
             <li key={id}>
@@ -83,7 +84,5 @@ class Book extends Component {
         );
     }
 }
-
-//<div key={a}>{a}</div>
 
 export default Book;

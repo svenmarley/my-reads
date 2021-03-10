@@ -4,6 +4,7 @@ This is my version of the MyReads project as requested in my pursuit of a [Nanod
 
 The requirement is to use a server created by the Udacity team to get lists of books, and track the books you have of interest - saving them different options/shelves back to the server.
 
+Note: This implementation uses [ulog](https://www.npmjs.com/package/ulog) for logging.  It is a new implementation and seems to be missing a key feature allowing setting a log localStorage entry to change the logging level.
 
 
 ## Installation
@@ -23,6 +24,15 @@ To get started right away:
 * Goto the projects subdirectory
 * Start the development server with `npm start`
 * Upon starting, the default browser will open, connecting to the npm server 
+
+Logging: To change console logging levels, add a log= param to the URL.  Options include:
+?log=[`error, warn, info, log, debug, trace, all, none`]
+
+`localhost:3000/?log=all`
+
+Logging defaults to `warn`.
+
+
 
 ## What You're Getting
 ```bash

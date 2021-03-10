@@ -5,9 +5,10 @@ import * as BooksAPI from '../utils/BooksAPI';
 import PropTypes from 'prop-types';
 
 import { globals } from '../App';
+import anylogger from 'anylogger';
 
 class Search extends Component {
-    sFunc = 'Search';
+    sFunc = this.constructor.name; //'BooksApp';
     state = {
         foundBooks : [],
         query : '',
@@ -22,11 +23,12 @@ class Search extends Component {
      * @param event {event}
      */
     handleChange = ( event ) => {
-        const sFunc = this.sFunc + '.handleChange()-->';
-        const debug = false;
+        const sFunc = 'handleChange';
+        const loggerName = ( this.sFunc + ':' + sFunc ).toLowerCase();
+        const log = anylogger( loggerName );
         const value = event.target.value;
 
-        debug && console.log( sFunc + 'value', value );
+        log.debug( 'value', value );
         this.setState( () => ( {
             query : value,
         } ), () => {
@@ -38,18 +40,19 @@ class Search extends Component {
      * Call the API with the current query, and update the state.foundBooks array
      */
     findBooks = () => {
-        const sFunc = this.sFunc + '.findBooks()-->';
-        const debug = false;
+        const sFunc = this.sFunc + ':findBooks';
+        const loggerName = ( sFunc ).toLowerCase();
+        const log = anylogger( loggerName );
 
-        debug && console.log( sFunc + 'query', this.state.query );
+        log.debug( 'query', this.state.query );
 
         BooksAPI.search( this.state.query.trim() )
                 .then( ( ret ) => {
-                    const sFunc = this.sFunc + '.findBooks.search()-->';
+                    const sFunc = '.search()-->';
                     const myBooks = this.props.books;
 
-                    debug && console.log( sFunc + 'ret', ret );
-                    debug && console.log( sFunc + 'props', this.props );
+                    log.debug( sFunc + 'ret', ret );
+                    log.debug( sFunc + 'props', this.props );
 
                     ret = ret || [];        // handle in case no books are returned
                     if ( typeof ( ret.error ) !== 'undefined' ) {   // handle if an error is returned
@@ -57,14 +60,14 @@ class Search extends Component {
                     }
 
                     ret.map( ( searchedBook ) => {
-                        debug && console.log( 'returnedBook.id', searchedBook.id );
+                        log.debug( 'returnedBook.id', searchedBook.id );
 
                         const foundMyBookArray = myBooks.filter( ( currBook ) => {   // see if the new searched book is currently in our list
-                            //console.log( 'currBook.id', currBook.id );
+                            log.debug( 'currBook.id', currBook.id );
                             return ( currBook.id === searchedBook.id );
                         } );
 
-                        debug && console.log( 'foundMyBookArray', foundMyBookArray );
+                        log.debug( 'foundMyBookArray', foundMyBookArray );
 
                         if ( foundMyBookArray.length ) {    // set the searchedBook.shelf to the found books shelf
                             searchedBook.shelf = foundMyBookArray[0].shelf;
@@ -77,7 +80,7 @@ class Search extends Component {
                         return true;
                     } );
 
-                    debug && console.log( 'ret', ret );
+                    log.debug( 'ret', ret );
                     this.setState( () => {
                         return ( {
                             foundBooks : ret,
