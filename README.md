@@ -25,12 +25,18 @@ To get started right away:
 * Start the development server with `npm start`
 * Upon starting, the default browser will open, connecting to the npm server 
 
-Logging: To change console logging levels, add a log= param to the URL.  Options include:
+##Logging Notes: 
+To change console logging levels, add a log= param to the URL.  Options include:
 ?log=[`error, warn, info, log, debug, trace, all, none`]
 
 `localhost:3000/?log=all`
 
 Logging defaults to `warn`.
+
+* All logger names are lowercase for the matching of the log= environment variable.
+ - i.e. if loggername = App:updateBook, and you want to turn on logging for it, but rest of app is left in _warn_, then the `log` entry looks like this:   `warn;app:updatebook=all`
+ - see better descriptions in the [ulog](https://www.npmjs.com/package/ulog) documentation, in the **Configure** section
+
 
 
 
