@@ -6,9 +6,10 @@ import PropTypes from 'prop-types';
 
 import { globals } from '../App';
 import anylogger from 'anylogger';
+import { throttle } from 'throttle-debounce';
 
 class Search extends Component {
-    sFunc = this.constructor.name; //'BooksApp';
+    sFunc = this.constructor.name; //'Search';
     state = {
         foundBooks : [],
         query : '',
@@ -24,14 +25,17 @@ class Search extends Component {
      */
     handleChange = ( event ) => {
         const sFunc = 'handleChange';
-        const loggerName = ( this.sFunc + ':' + sFunc ).toLowerCase();
+        const loggerName = ( this.sFunc + ':' + sFunc );
         const log = anylogger( loggerName );
         const value = event.target.value;
 
-        log.debug( 'value', value );
+        //log.level = log.ALL;
+        log.info( 'inside' );
+
         this.setState( () => ( {
             query : value,
         } ), () => {
+
             this.findBooks();
         } );
     };
@@ -41,52 +45,15 @@ class Search extends Component {
      */
     findBooks = () => {
         const sFunc = this.sFunc + ':findBooks';
-        const loggerName = ( sFunc ).toLowerCase();
-        const log = anylogger( loggerName );
+        const log = anylogger( sFunc );
+
+        //log.level = log.ALL;
 
         log.debug( 'query', this.state.query );
 
-        BooksAPI.search( this.state.query.trim() )
-                .then( ( ret ) => {
-                    const sFunc = '.search()-->';
-                    const myBooks = this.props.books;
 
-                    log.debug( sFunc + 'ret', ret );
-                    log.debug( sFunc + 'props', this.props );
+        throttleSearch(this);
 
-                    ret = ret || [];        // handle in case no books are returned
-                    if ( typeof ( ret.error ) !== 'undefined' ) {   // handle if an error is returned
-                        ret = [];
-                    }
-
-                    ret.map( ( searchedBook ) => {
-                        log.debug( 'returnedBook.id', searchedBook.id );
-
-                        const foundMyBookArray = myBooks.filter( ( currBook ) => {   // see if the new searched book is currently in our list
-                            log.debug( 'currBook.id', currBook.id );
-                            return ( currBook.id === searchedBook.id );
-                        } );
-
-                        log.debug( 'foundMyBookArray', foundMyBookArray );
-
-                        if ( foundMyBookArray.length ) {    // set the searchedBook.shelf to the found books shelf
-                            searchedBook.shelf = foundMyBookArray[0].shelf;
-                        }
-                        else {
-                            searchedBook.shelf = globals.shelves.filter( ( shelf ) => {       // else, set it to NONE
-                                return ( shelf.id === 'NONE' );
-                            } ).apiID;
-                        }
-                        return true;
-                    } );
-
-                    log.debug( 'ret', ret );
-                    this.setState( () => {
-                        return ( {
-                            foundBooks : ret,
-                        } );
-                    } );
-                } );
     };
 
     render() {
@@ -127,5 +94,56 @@ class Search extends Component {
         );
     }
 }
+
+
+const throttleSearch = throttle( 700, false, (tThis) => {
+    const sFunc = 'throttleSearch';
+    const log = anylogger( sFunc );
+    log.info( 'inside throttle' );
+    //log.level = log.WARN;
+
+    BooksAPI.search( tThis.state.query.trim() )
+            .then( ( ret ) => {
+                const sFunc = '.search()-->';
+                const myBooks = tThis.props.books;
+
+                log.debug( sFunc + 'ret', ret );
+                log.debug( sFunc + 'props', tThis.props );
+
+                ret = ret || [];        // handle in case no books are returned
+                if ( typeof ( ret.error ) !== 'undefined' ) {   // handle if an error is returned
+                    ret = [];
+                }
+
+                ret.map( ( searchedBook ) => {
+                    log.debug( 'returnedBook.id', searchedBook.id );
+
+                    const foundMyBookArray = myBooks.filter( ( currBook ) => {   // see if the new searched book is currently in our list
+                        log.debug( 'currBook.id', currBook.id );
+                        return ( currBook.id === searchedBook.id );
+                    } );
+
+                    log.debug( 'foundMyBookArray', foundMyBookArray );
+
+                    if ( foundMyBookArray.length ) {    // set the searchedBook.shelf to the found books shelf
+                        searchedBook.shelf = foundMyBookArray[0].shelf;
+                    }
+                    else {
+                        searchedBook.shelf = globals.shelves.filter( ( shelf ) => {       // else, set it to NONE
+                            return ( shelf.id === 'NONE' );
+                        } ).apiID;
+                    }
+                    return true;
+                } );
+
+                log.debug( 'ret', ret );
+                tThis.setState( () => {
+                    return ( {
+                        foundBooks : ret,
+                    } );
+                } );
+            } );
+
+});
 
 export default Search;

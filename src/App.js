@@ -6,10 +6,6 @@ import * as BooksAPI from './utils/BooksAPI';
 import Search from './components/Search.js';
 import anylogger from 'anylogger';
 
-// const log = anylogger('my-app')
-// log( 'Logging is easy!')
-// log.level = log.WARN;
-
 // used a Global for "defines" so we don't hardcode things, and we can easily change text, apiID's, etc...
 const globals = {
     shelves : [
@@ -129,5 +125,6 @@ class App extends React.Component {
         );
     }
 }
+
 
 export default App;

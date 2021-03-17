@@ -2,9 +2,9 @@
 
 This is my version of the MyReads project as requested in my pursuit of a [Nanodegree](https://www.udacity.com/school-of-programming) in React from Udacity.
 
-The requirement is to use a server created by the Udacity team to get lists of books, and track the books you have of interest - saving them different options/shelves back to the server.
+The requirement is to use a server created by the Udacity team to get lists of books, and track the books you have of interest - saving them different options/shelves back to the server.  The search is throttled using the [throttle-debounce](https://www.npmjs.com/package/throttle-debounce) package.
 
-Note: This implementation uses [ulog](https://www.npmjs.com/package/ulog) for logging.  It is a new implementation and seems to be missing a key feature allowing setting a log localStorage entry to change the logging level.
+Note: This implementation uses [ulog](https://www.npmjs.com/package/ulog) for logging. 
 
 
 ## Installation
@@ -36,7 +36,6 @@ Logging defaults to `warn`.
 * All logger names are lowercase for the matching of the log= environment variable.
  - i.e. if loggername = App:updateBook, and you want to turn on logging for it, but rest of app is left in _warn_, then the `log` entry looks like this:   `warn;app:updatebook=all`
  - see better descriptions in the [ulog](https://www.npmjs.com/package/ulog) documentation, in the **Configure** section
-
 
 
 
